@@ -88,7 +88,7 @@
     }
 
     .package.selected::after {
-      content: "\2713"; /* Unicode টিক চিহ্ন (✓) */
+      content: "\2713";
       position: absolute;
       top: 6px;
       right: 10px;
@@ -177,30 +177,30 @@
 
       <label for="uid">UID</label>
       <input type="text" name="uid" id="uid" required>
- <h2>Rules & Conditions</h2>
-      <label for="uid">1.শুধুমাত্র Bangladesh সার্ভারে ID Code দিয়ে টপ আপ হবে।</label>
-      <label for="uid">2.Player ID Code ভুল দিয়ে Diamond না পেলে কর্তৃপক্ষ দায়ী নয় ।</label>
-      <label for="uid">3.Order কমপ্লিট হওয়ার পরেও আইডিতে ডাইমন্ড না গেলে চেক করার জন্য ID Pass দিতে হবে।</label>
-      <label for="uid">4.অর্ডার Cancel হলে কি কারণে তা Cancel হয়েছে তা অর্ডার হিস্টোরিতে দেওয়া থাকে অনুগ্রহ পুর্বক দেখে পুনরায় সঠিক তথ্য দিয়ে অর্ডার করবেন।</label>
-      
+      <h2>Rules & Conditions</h2>
+      <label>1. শুধুমাত্র Bangladesh সার্ভারে ID Code দিয়ে টপ আপ হবে।</label>
+      <label>2. Player ID Code ভুল দিয়ে Diamond না পেলে কর্তৃপক্ষ দায়ী নয়।</label>
+      <label>3. Order কমপ্লিট হওয়ার পরেও আইডিতে ডাইমন্ড না গেলে চেক করার জন্য ID Pass দিতে হবে।</label>
+      <label>4. অর্ডার Cancel হলে কি কারণে তা Cancel হয়েছে তা অর্ডার হিস্টোরিতে দেওয়া থাকে অনুগ্রহ পূর্বক দেখে পুনরায় সঠিক তথ্য দিয়ে অর্ডার করবেন।</label>
+
       <button type="button" onclick="goToPage2()">পরবর্তী</button>
     </div>
 
     <!-- Page 2 -->
     <div id="page2" class="page">
       <h2>পেমেন্ট সিস্টেম নির্বাচন করুন</h2>
-       <label for="title">*অবশ্যই সেন্ড মানি করতে হবে রিচার্জ বা ক্যাশ আউট করলে পেমেন্ট বাতিল বলে গণ্য হবে,এবং সেই টাকা ফেরত যোগ্য নয়।*</label>
-       <label for="uid"></label>
-       <label for="uid"></label>
-       <label for="uid"></label>
+      <label>*অবশ্যই সেন্ড মানি করতে হবে রিচার্জ বা ক্যাশ আউট করলে পেমেন্ট বাতিল বলে গণ্য হবে, এবং সেই টাকা ফেরত যোগ্য নয়।*</label>
       <div class="image-options" id="imageOptions">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbMHFF25ncu0Zr7G0p_P9nnYNep9WFnpDygg&usqp=CAU" alt="Option 1" data-value=" BKash: 01825201873  সেন্ড মানি করুন।">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Ns2B4jU5oWLBcuxnCqPfiNpDPsjE6GZqyA&s" alt="Option 2" data-value=" Nagad: 01825201873  সেন্ড মানি করুন।">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxH71LkQdLLplSIZJ5Hh3x936jEgc2SONv0Qe9b5xoK94ouHh_K29_1Ucl&s=10" alt="Option 3" data-value=" Roket: 018252018734  সেন্ড মানি করুন।">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbMHFF25ncu0Zr7G0p_P9nnYNep9WFnpDygg&usqp=CAU" alt="Option 1" data-value="BKash: 01825201873  সেন্ড মানি করুন।">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Ns2B4jU5oWLBcuxnCqPfiNpDPsjE6GZqyA&s" alt="Option 2" data-value="Nagad: 01825201873  সেন্ড মানি করুন।">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxH71LkQdLLplSIZJ5Hh3x936jEgc2SONv0Qe9b5xoK94ouHh_K29_1Ucl&s=10" alt="Option 3" data-value="Roket: 018252018734  সেন্ড মানি করুন।">
       </div>
       <input type="hidden" name="selectedImage" id="selectedImage" required>
 
       <div id="infoBox" class="info-box"></div>
+
+      <!-- প্যাকেজ দাম দেখানোর নতুন সেকশন -->
+      <div id="priceDisplay" class="info-box" style="background:#fef3c7; display:none;"></div>
 
       <label for="sender">Sender Number</label>
       <input type="text" name="sender" id="sender" required>
@@ -242,12 +242,17 @@
   });
 
   function goToPage2() {
-    if (!selectedPackageInput.value || !document.getElementById('uid').value) {
+    const uidInput = document.getElementById('uid');
+    if (!selectedPackageInput.value || !uidInput.value.trim()) {
       alert("প্যাকেজ এবং UID দিন");
       return;
     }
     document.getElementById('page1').classList.remove('active');
     document.getElementById('page2').classList.add('active');
+
+    const priceDisplay = document.getElementById('priceDisplay');
+    priceDisplay.textContent = `আপনি ${selectedPackageInput.value} প্যাকেজটি বেছে নিয়েছেন।`;
+    priceDisplay.style.display = 'block';
   }
 
   document.getElementById('infoForm').addEventListener('submit', function (e) {
