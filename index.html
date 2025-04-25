@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>প্যাকেজ নির্বাচন</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f2f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      color: #334155;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 14px 25px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 0 auto;
+      width: 100%;
+      max-width: 300px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .package-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .package {
+      position: relative;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .package.selected {
+      background-color: #e0f2fe;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px #93c5fd;
+    }
+
+    .package.selected::after {
+      content: "\2713"; /* Unicode টিক চিহ্ন (✓) */
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 18px;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    .image-options {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .image-options img {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .image-options img.selected {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px #93c5fd;
+    }
+
+    .info-box {
+      margin-top: 10px;
+      font-size: 16px;
+      background: #e0f7fa;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .spinner {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .thank-you {
+      display: none;
+      text-align: center;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <form id="infoForm">
+
+    <!-- Page 1 -->
+    <div id="page1" class="page active">
+      <h2>প্যাকেজ নির্বাচন করুন</h2>
+      <div class="package-grid" id="packageGrid">
+        <div class="package" data-value="Wekly 155 TK">Wekly 155 TK</div>
+        <div class="package" data-value="Monthly 770TK">Monthly 770 TK</div>
+        <div class="package" data-value="25 Diamond - 24 TK">25 Diamond - 24 TK</div>
+        <div class="package" data-value="50 Diamond - 38 TK">50 Diamond - 38 TK</div>
+        <div class="package" data-value="100 Diamond - 75 TK">100 Diamond - 75 TK</div>
+        <div class="package" data-value="115 Diamond - 80 TK">115 Diamond - 80 TK</div>
+        <div class="package" data-value="240 Diamond - 156 TK">240 Diamond - 156 TK</div>
+        <div class="package" data-value="355 Diamond - 235 TK">355 Diamond - 235 TK</div>
+        <div class="package" data-value="480 Diamond - 311 TK">480 Diamond - 311 TK</div>
+        <div class="package" data-value="505 Diamond - 348 TK">505 Diamond - 348 TK</div>
+      </div>
+      <input type="hidden" name="package" id="selectedPackage" required>
+
+      <label for="uid">UID</label>
+      <input type="text" name="uid" id="uid" required>
+
+      <button type="button" onclick="goToPage2()">পরবর্তী</button>
+    </div>
+
+    <!-- Page 2 -->
+    <div id="page2" class="page">
+      <h2>ছবি নির্বাচন করুন</h2>
+      <div class="image-options" id="imageOptions">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbMHFF25ncu0Zr7G0p_P9nnYNep9WFnpDygg&usqp=CAU" alt="Option 1" data-value="নাম্বার: ১০১">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Ns2B4jU5oWLBcuxnCqPfiNpDPsjE6GZqyA&s" alt="Option 2" data-value="নাম্বার: ২০২">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxH71LkQdLLplSIZJ5Hh3x936jEgc2SONv0Qe9b5xoK94ouHh_K29_1Ucl&s=10" alt="Option 3" data-value="নাম্বার: ৩০৩">
+      </div>
+      <input type="hidden" name="selectedImage" id="selectedImage" required>
+
+      <div id="infoBox" class="info-box"></div>
+
+      <label for="sender">Sender Number</label>
+      <input type="text" name="sender" id="sender" required>
+
+      <label for="trx">Transaction ID</label>
+      <input type="text" name="trx" id="trx" required>
+
+      <button type="submit" id="submitBtn">জমা দিন</button>
+      <div class="spinner" id="spinner">জমা হচ্ছে...</div>
+    </div>
+  </form>
+
+  <div class="thank-you" id="thankYouMessage"></div>
+</div>
+
+<script>
+  const packageElements = document.querySelectorAll('.package');
+  const selectedPackageInput = document.getElementById('selectedPackage');
+
+  packageElements.forEach(pkg => {
+    pkg.addEventListener('click', () => {
+      packageElements.forEach(p => p.classList.remove('selected'));
+      pkg.classList.add('selected');
+      selectedPackageInput.value = pkg.dataset.value;
+    });
+  });
+
+  const imageOptions = document.querySelectorAll('.image-options img');
+  const infoBox = document.getElementById('infoBox');
+
+  imageOptions.forEach(img => {
+    img.addEventListener('click', () => {
+      imageOptions.forEach(i => i.classList.remove('selected'));
+      img.classList.add('selected');
+      infoBox.textContent = img.dataset.value;
+      infoBox.style.display = 'block';
+      document.getElementById('selectedImage').value = img.dataset.value;
+    });
+  });
+
+  function goToPage2() {
+    if (!selectedPackageInput.value || !document.getElementById('uid').value) {
+      alert("প্যাকেজ এবং UID দিন");
+      return;
+    }
+    document.getElementById('page1').classList.remove('active');
+    document.getElementById('page2').classList.add('active');
+  }
+
+  document.getElementById('infoForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+
+    if (!selectedPackageInput.value || !document.getElementById('selectedImage').value) {
+      alert("সব তথ্য পূর্ণ করুন");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    spinner.style.display = 'block';
+
+    const data = new FormData(this);
+
+    fetch('https://script.google.com/macros/s/AKfycbyYCiESONg91MZA-tOrYPDSfAKoY9DWBld-AgIZ7QFLtKMEwJn74ULJ8qn_lXV2CVkAJw/exec', {
+      method: 'POST',
+      body: data
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) {
+        this.style.display = 'none';
+        document.getElementById('thankYouMessage').innerHTML = `
+          <h1 style="color: #10b981;">ধন্যবাদ!</h1>
+          <p>আপনার অর্ডার সফল হয়েছে।</p>
+          <p><strong>অর্ডার আইডি:</strong> ${res.orderId}</p>
+        `;
+        document.getElementById('thankYouMessage').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('দুঃখিত, আবার চেষ্টা করুন।');
+      }
+      submitBtn.disabled = false;
+      spinner.style.display = 'none';
+    })
+    .catch(() => {
+      alert('নেটওয়ার্ক ত্রুটি! আবার চেষ্টা করুন।');
+      submitBtn.disabled = false;
+      spinner.style.display = 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
