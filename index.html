@@ -151,20 +151,53 @@
     .page.active {
       display: block;
     }
+
+    .total-card {
+      margin-top: 30px;
+      text-align: center;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .total-card h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+      color: #374151;
+    }
+
+    .total-card h2 {
+      font-size: 24px;
+      color: #10b981;
+      margin-top: 10px;
+    }
+
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #10b981;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      margin: 15px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
   </style>
 </head>
+
 <body>
 
 <div class="form-container">
   <form id="infoForm">
-
-    <!-- Page 1 -->
     <div id="page1" class="page active">
       <h2>প্যাকেজ নির্বাচন করুন</h2>
       <div class="package-grid" id="packageGrid">
-        <div class="package" data-value="Level Up Pass 168 TK">Level Up Pass 168 TK</div>
         <div class="package" data-value="Wekly 155 TK">Wekly 155 TK</div>
-        <div class="package" data-value="Wekly Lite 40 TK">Wekly Lite 40 TK</div>
         <div class="package" data-value="Monthly 770TK">Monthly 770 TK</div>
         <div class="package" data-value="25 Diamond - 24 TK">25 Diamond - 24 TK</div>
         <div class="package" data-value="50 Diamond - 38 TK">50 Diamond - 38 TK</div>
@@ -174,25 +207,23 @@
         <div class="package" data-value="355 Diamond - 235 TK">355 Diamond - 235 TK</div>
         <div class="package" data-value="480 Diamond - 311 TK">480 Diamond - 311 TK</div>
         <div class="package" data-value="505 Diamond - 348 TK">505 Diamond - 348 TK</div>
-         <div class="package" data-value="725 Diamond - 485 TK">725 Diamond - 485 TK</div>
       </div>
       <input type="hidden" name="package" id="selectedPackage" required>
 
       <label for="uid">UID</label>
       <input type="text" name="uid" id="uid" required>
+
       <h2>Rules & Conditions</h2>
       <label>1. শুধুমাত্র Bangladesh সার্ভারে ID Code দিয়ে টপ আপ হবে।</label>
       <label>2. Player ID Code ভুল দিয়ে Diamond না পেলে কর্তৃপক্ষ দায়ী নয়।</label>
       <label>3. Order কমপ্লিট হওয়ার পরেও আইডিতে ডাইমন্ড না গেলে চেক করার জন্য ID Pass দিতে হবে।</label>
       <label>4. অর্ডার Cancel হলে কি কারণে তা Cancel হয়েছে তা অর্ডার হিস্টোরিতে দেওয়া থাকে অনুগ্রহ পূর্বক দেখে পুনরায় সঠিক তথ্য দিয়ে অর্ডার করবেন।</label>
 
-      <button type="button" onclick="goToPage2()">BUY NOW</button>
+      <button type="button" onclick="goToPage2()">পরবর্তী</button>
     </div>
 
-    <!-- Page 2 -->
     <div id="page2" class="page">
       <h2>পেমেন্ট সিস্টেম নির্বাচন করুন</h2>
-      <label>*অবশ্যই সেন্ড মানি করতে হবে রিচার্জ বা ক্যাশ আউট করলে পেমেন্ট বাতিল বলে গণ্য হবে, এবং সেই টাকা ফেরত যোগ্য নয়।*</label>
       <div class="image-options" id="imageOptions">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbMHFF25ncu0Zr7G0p_P9nnYNep9WFnpDygg&usqp=CAU" alt="Option 1" data-value="BKash: 01825201873  সেন্ড মানি করুন।">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Ns2B4jU5oWLBcuxnCqPfiNpDPsjE6GZqyA&s" alt="Option 2" data-value="Nagad: 01825201873  সেন্ড মানি করুন।">
@@ -201,8 +232,6 @@
       <input type="hidden" name="selectedImage" id="selectedImage" required>
 
       <div id="infoBox" class="info-box"></div>
-
-      <!-- প্যাকেজ দাম দেখানোর নতুন সেকশন -->
       <div id="priceDisplay" class="info-box" style="background:#fef3c7; display:none;"></div>
 
       <label for="sender">Sender Number</label>
@@ -219,87 +248,132 @@
   <div class="thank-you" id="thankYouMessage"></div>
 </div>
 
+<div class="total-card">
+  <h3>মোট টাকার পরিমাণ</h3>
+  <div id="totalLoader" class="loader"></div>
+  <h2 id="totalAmount" style="display:none;">0 টাকা</h2>
+</div>
+
 <script>
-  const packageElements = document.querySelectorAll('.package');
-  const selectedPackageInput = document.getElementById('selectedPackage');
+const packageElements = document.querySelectorAll('.package');
+const selectedPackageInput = document.getElementById('selectedPackage');
+let selectedPackageValue = '';
 
-  packageElements.forEach(pkg => {
-    pkg.addEventListener('click', () => {
-      packageElements.forEach(p => p.classList.remove('selected'));
-      pkg.classList.add('selected');
-      selectedPackageInput.value = pkg.dataset.value;
-    });
+packageElements.forEach(pkg => {
+  pkg.addEventListener('click', () => {
+    packageElements.forEach(p => p.classList.remove('selected'));
+    pkg.classList.add('selected');
+    selectedPackageInput.value = pkg.dataset.value;
+    selectedPackageValue = pkg.dataset.value;
   });
+});
 
-  const imageOptions = document.querySelectorAll('.image-options img');
-  const infoBox = document.getElementById('infoBox');
+const imageOptions = document.querySelectorAll('.image-options img');
+const infoBox = document.getElementById('infoBox');
 
-  imageOptions.forEach(img => {
-    img.addEventListener('click', () => {
-      imageOptions.forEach(i => i.classList.remove('selected'));
-      img.classList.add('selected');
-      infoBox.textContent = img.dataset.value;
-      infoBox.style.display = 'block';
-      document.getElementById('selectedImage').value = img.dataset.value;
-    });
+imageOptions.forEach(img => {
+  img.addEventListener('click', () => {
+    imageOptions.forEach(i => i.classList.remove('selected'));
+    img.classList.add('selected');
+    infoBox.textContent = img.dataset.value;
+    infoBox.style.display = 'block';
+    document.getElementById('selectedImage').value = img.dataset.value;
   });
+});
 
-  function goToPage2() {
-    const uidInput = document.getElementById('uid');
-    if (!selectedPackageInput.value || !uidInput.value.trim()) {
-      alert("প্যাকেজ এবং UID দিন");
-      return;
-    }
-    document.getElementById('page1').classList.remove('active');
-    document.getElementById('page2').classList.add('active');
+function goToPage2() {
+  const uidInput = document.getElementById('uid');
+  if (!selectedPackageInput.value || !uidInput.value.trim()) {
+    alert("প্যাকেজ এবং UID দিন");
+    return;
+  }
+  document.getElementById('page1').classList.remove('active');
+  document.getElementById('page2').classList.add('active');
 
-    const priceDisplay = document.getElementById('priceDisplay');
-    priceDisplay.textContent = `আপনি ${selectedPackageInput.value} প্যাকেজটি বেছে নিয়েছেন।`;
-    priceDisplay.style.display = 'block';
+  const priceDisplay = document.getElementById('priceDisplay');
+  priceDisplay.textContent = `আপনি ${selectedPackageValue} প্যাকেজটি বেছে নিয়েছেন।`;
+  priceDisplay.style.display = 'block';
+}
+
+document.getElementById('infoForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const submitBtn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+
+  if (!selectedPackageInput.value || !document.getElementById('selectedImage').value) {
+    alert("সব তথ্য পূর্ণ করুন");
+    return;
   }
 
-  document.getElementById('infoForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById('submitBtn');
-    const spinner = document.getElementById('spinner');
+  submitBtn.disabled = true;
+  spinner.style.display = 'block';
 
-    if (!selectedPackageInput.value || !document.getElementById('selectedImage').value) {
-      alert("সব তথ্য পূর্ণ করুন");
-      return;
+  const data = new FormData(this);
+
+  fetch('https://script.google.com/macros/s/AKfycbwYZQCXk0oDDqiZu3BoTEPC_tlBTQ-QaSPph7TnnWfvcZOYR6VlXkeS9f_76ewvLgW0Xw/exec', {
+    method: 'POST',
+    body: data
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      this.style.display = 'none';
+      document.getElementById('thankYouMessage').innerHTML = `
+        <h1 style="color: #10b981;">ধন্যবাদ!</h1>
+        <p>আপনার অর্ডার সফল হয়েছে।</p>
+        <p><strong>অর্ডার আইডি:</strong> ${res.orderId}</p>
+      `;
+      document.getElementById('thankYouMessage').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      alert('দুঃখিত, আবার চেষ্টা করুন।');
     }
-
-    submitBtn.disabled = true;
-    spinner.style.display = 'block';
-
-    const data = new FormData(this);
-
-    fetch('https://script.google.com/macros/s/AKfycby4QcMmNcNVVxFxmayBVU7A7f81ouUlUhDmr_RSN2ZJIPsc14i-qaolcKH7p9aBYeTqcg/exec', {
-      method: 'POST',
-      body: data
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.success) {
-        this.style.display = 'none';
-        document.getElementById('thankYouMessage').innerHTML = `
-          <h1 style="color: #10b981;">ধন্যবাদ!</h1>
-          <p>আপনার অর্ডার সফল হয়েছে।</p>
-          <p><strong>অর্ডার আইডি:</strong> ${res.orderId}</p>
-        `;
-        document.getElementById('thankYouMessage').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        alert('দুঃখিত, আবার চেষ্টা করুন।');
-      }
-      submitBtn.disabled = false;
-      spinner.style.display = 'none';
-    })
-    .catch(() => {
-      alert('নেটওয়ার্ক ত্রুটি! আবার চেষ্টা করুন।');
-      submitBtn.disabled = false;
-      spinner.style.display = 'none';
-    });
+    submitBtn.disabled = false;
+    spinner.style.display = 'none';
+  })
+  .catch(() => {
+    alert('নেটওয়ার্ক ত্রুটি! আবার চেষ্টা করুন।');
+    submitBtn.disabled = false;
+    spinner.style.display = 'none';
   });
+});
+
+const apiUrl = "https://script.google.com/macros/s/AKfycbwYZQCXk0oDDqiZu3BoTEPC_tlBTQ-QaSPph7TnnWfvcZOYR6VlXkeS9f_76ewvLgW0Xw/exec"; // এখানে তোমার Apps Script URL বসাও
+
+function fetchTotalAmount() {
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('totalLoader').style.display = 'none';
+      document.getElementById('totalAmount').style.display = 'block';
+      if (data.success) {
+        animateCounter(data.total);
+      } else {
+        document.getElementById('totalAmount').innerText = "ডেটা পাওয়া যায়নি!";
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('totalLoader').style.display = 'none';
+      document.getElementById('totalAmount').innerText = "সার্ভার সমস্যা!";
+    });
+}
+
+function animateCounter(finalAmount) {
+  let count = 0;
+  const totalElement = document.getElementById('totalAmount');
+  const increment = finalAmount / 100;
+  const interval = setInterval(() => {
+    count += increment;
+    if (count >= finalAmount) {
+      count = finalAmount;
+      clearInterval(interval);
+    }
+    totalElement.innerText = Math.floor(count) + " টাকা";
+  }, 20);
+}
+
+window.addEventListener('load', fetchTotalAmount);
 </script>
 
 </body>
